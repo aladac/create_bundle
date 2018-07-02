@@ -14,6 +14,6 @@ end.parse!
 
 exit unless ARGV[0]
 
-c = CreateLink::Base.new(ARGV[0])
+c = CreateLink::Base.new(ARGV[0], ARGV[1])
 c.verbose = options[:verbose]
 c.create

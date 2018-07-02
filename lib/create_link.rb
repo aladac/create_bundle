@@ -9,10 +9,10 @@ module CreateLink
   class Base
     attr_accessor :logger, :app_path, :target_path, :verbose
 
-    def initialize(path, target_path = '.')
+    def initialize(path, target_path = nil)
       @logger = Logger.new(STDOUT)
       @app_path = Pathname(path)
-      @target_path = Pathname(target_path) + @app_path.basename.to_s if target_path == '.'
+      @target_path = target_path ? Pathname(target_path) : Pathname(@app_path.basename.to_s)
       (logger.info("Source doesn't look like an app bundle") && exit) unless plist_path.exist?
     end
 

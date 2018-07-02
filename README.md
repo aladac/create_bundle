@@ -4,18 +4,6 @@ A simple tool for creating bare MacOS application bundles containing an icon and
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'create_link'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
     $ gem install create_link
 
 ## Usage

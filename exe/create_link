@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'create_link'
+
+exit unless ARGV[0]
+
+c = CreateLink::Base.new(ARGV[0])
+c.create

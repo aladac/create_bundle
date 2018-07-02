@@ -3,15 +3,17 @@ require 'logger'
 require 'plist'
 require 'pathname'
 require 'pry'
+require 'optparse'
 
 module CreateLink
   class Base
-    attr_accessor :logger, :app_path, :target_path
+    attr_accessor :logger, :app_path, :target_path, :verbose
 
     def initialize(path, target_path = './')
       @logger = Logger.new(STDOUT)
       @app_path = Pathname(path)
       @target_path = Pathname(target_path) + @app_path.basename.to_s
+      (logger.info("Source doesn't look like an app bundle") && exit) unless plist_path.exist?
     end
 
     def icon_path
@@ -43,10 +45,15 @@ module CreateLink
     end
 
     def create_dirs
-      Dir.mkdir target_path
-      Dir.mkdir contents_dir
-      Dir.mkdir resources_dir
-      Dir.mkdir macos_dir
+      create_dir target_path
+      create_dir contents_dir
+      create_dir resources_dir
+      create_dir macos_dir
+    end
+
+    def create_dir(path)
+      Dir.mkdir path
+      logger.debug "Created dir: #{path}" if verbose
     end
 
     def create_plist
@@ -57,10 +64,12 @@ module CreateLink
       f = File.new(contents_dir + 'Info.plist', 'w')
       f.puts target_plist_hash.to_plist
       f.close
+      logger.debug "Created plist file: #{(contents_dir + 'Info.plist')}" if verbose
     end
 
     def copy_icon
       File.link(icon_path, resources_dir + 'applet.icns')
+      logger.debug "Copied icon to: #{(resources_dir + 'applet.icns')}" if verbose
     end
 
     def create_exec
@@ -68,6 +77,7 @@ module CreateLink
       f.puts "#!/bin/sh\nopen -a \"#{ARGV[0]}\""
       f.close
       FileUtils.chmod 0o755, macos_dir + 'applet'
+      logger.debug "Created exec: #{(macos_dir + 'applet')}" if verbose
     end
 
     def create
@@ -76,7 +86,7 @@ module CreateLink
       create_exec
       create_plist
     rescue Errno::EEXIST => e
-      puts e.message
+      logger.error e.message
     end
   end
 end

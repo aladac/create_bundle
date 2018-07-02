@@ -2,10 +2,18 @@
 
 require 'create_link'
 
-unless ARGV[0]
-  puts "Usage: #{File.basename $PROGRAM_NAME} SOURCE_APP [DESTINATION_PATH]"
-  exit
-end
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: example.rb [-v] SOURCE_APP [DESTINATION_APP]'
+
+  opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
+    options[:verbose] = v
+  end
+  puts opts if opts.default_argv.empty?
+end.parse!
+
+exit unless ARGV[0]
 
 c = CreateLink::Base.new(ARGV[0])
+c.verbose = options[:verbose]
 c.create

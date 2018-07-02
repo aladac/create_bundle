@@ -9,15 +9,19 @@ module CreateLink
   class Base
     attr_accessor :logger, :app_path, :target_path, :verbose
 
-    def initialize(path, target_path = './')
+    def initialize(path, target_path = '.')
       @logger = Logger.new(STDOUT)
       @app_path = Pathname(path)
-      @target_path = Pathname(target_path) + @app_path.basename.to_s
+      @target_path = Pathname(target_path) + @app_path.basename.to_s if target_path == '.'
       (logger.info("Source doesn't look like an app bundle") && exit) unless plist_path.exist?
     end
 
     def icon_path
       app_path + 'Contents' + 'Resources' + icon_file
+    rescue ArgumentError
+      logger.warn 'Problem reading source plist file, probably binary format, falling back to default icon name'
+      icon = app_path + 'Contents' + 'Resources' + 'AppIcon.icns'
+      icon || exit
     end
 
     def plist_path

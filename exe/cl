@@ -4,7 +4,7 @@ require 'create_link'
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = 'Usage: example.rb [-v] SOURCE_APP [DESTINATION_APP]'
+  opts.banner = "Usage: #{File.basename $PROGRAM_NAME} [-v] SOURCE_APP [DESTINATION_APP]"
 
   opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
     options[:verbose] = v

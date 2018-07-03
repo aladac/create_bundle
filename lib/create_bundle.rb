@@ -30,7 +30,7 @@ module CreateBundle
         Pathname(@custom_icon)
       else
         puts "Icon file doesn't exist"
-        exit
+        exit_and_cleanup
       end
     end
 
@@ -39,7 +39,7 @@ module CreateBundle
     rescue ArgumentError
       logger.warn 'Problem reading source plist file, probably binary format, falling back to default icon name'
       icon = app_path + 'Contents' + 'Resources' + 'AppIcon.icns'
-      icon || exit
+      icon || exit_and_cleanup
     end
 
     def plist_path
@@ -67,10 +67,7 @@ module CreateBundle
     end
 
     def create_dirs
-      create_dir target_path
-      create_dir contents_dir
-      create_dir resources_dir
-      create_dir macos_dir
+      [target_path, contents_dir, resources_dir, macos_dir].each { |dir| create_dir(dir) }
     end
 
     def create_dir(path)
@@ -109,7 +106,7 @@ module CreateBundle
         true
       else
         puts "Script file doesn't exist"
-        exit
+        exit_and_cleanup
       end
     end
 
@@ -124,6 +121,11 @@ module CreateBundle
       create_plist
     rescue Errno::EEXIST => e
       logger.error e.message
+    end
+
+    def exit_and_cleanup
+      FileItils.rm_rf(target_path)
+      exit
     end
   end
 end

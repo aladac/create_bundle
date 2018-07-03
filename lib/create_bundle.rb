@@ -124,7 +124,7 @@ module CreateBundle
     end
 
     def exit_and_cleanup
-      FileItils.rm_rf(target_path)
+      FileUtils.rm_rf(target_path)
       exit
     end
   end

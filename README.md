@@ -1,10 +1,10 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/355d543c76280628d326/maintainability)](https://codeclimate.com/github/aladac/create_bundle/maintainability)
 # create_bundle 
 
-A simple tool for creating bare MacOS application bundles containing an icon and launch command copied from the source application.
+Tool for creating MacOS application bundles containing an icon and launch command copied from the source application.
 
 # Why?
-- Can't you just create a link? _Yes I can but i can't add commands to be run before an app is started_
+- Can't you just create a link? _Yes I can but I can't add commands to be run before an app is started_
 - Can't you just do it all using a bash one liner? _Yes I can but I'm lazy and the gem exec provides some basic error handling_
 - To create bare bundles to edit later
 

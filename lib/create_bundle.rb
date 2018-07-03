@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'create_bundle/version'
 require 'logger'
 require 'plist'
@@ -9,11 +11,27 @@ module CreateBundle
   class Base
     attr_accessor :logger, :app_path, :target_path, :verbose
 
-    def initialize(path, target_path = nil)
+    def initialize(path, target_path = nil, custom_script = nil, custom_icon = nil, bare = false)
       @logger = Logger.new(STDOUT)
       @app_path = Pathname(path)
+      @custom_icon = custom_icon
+      @custom_script = custom_script
+      if bare
+        target_path = path
+      else
+        (logger.info("Source doesn't look like an app bundle") && exit) unless plist_path.exist?
+      end
       @target_path = target_path ? Pathname(target_path) : Pathname(@app_path.basename.to_s)
-      (logger.info("Source doesn't look like an app bundle") && exit) unless plist_path.exist?
+    end
+
+    def custom_icon_path
+      return false unless @custom_icon
+      if Pathname(@custom_icon).exist?
+        Pathname(@custom_icon)
+      else
+        puts "Icon file doesn't exist"
+        exit
+      end
     end
 
     def icon_path
@@ -33,7 +51,7 @@ module CreateBundle
     end
 
     def icon_file
-      plist['CFBundleIconFile'] !~ /icns$/ ? plist['CFBundleIconFile'] + '.icns' : plist['CFBundleIconFile']
+      !/icns$/.match?(plist['CFBundleIconFile']) ? plist['CFBundleIconFile'] + '.icns' : plist['CFBundleIconFile']
     end
 
     def contents_dir
@@ -72,16 +90,31 @@ module CreateBundle
     end
 
     def copy_icon
-      File.link(icon_path, resources_dir + 'applet.icns')
+      File.link(custom_icon_path || icon_path, resources_dir + 'applet.icns')
       logger.debug "Copied icon to: #{(resources_dir + 'applet.icns')}" if verbose
     end
 
-    def create_exec
+    def write_script
       f = File.new(macos_dir + 'applet', 'w')
       f.puts "#!/bin/sh\nopen -a \"#{ARGV[0]}\""
       f.close
       FileUtils.chmod 0o755, macos_dir + 'applet'
       logger.debug "Created exec: #{(macos_dir + 'applet')}" if verbose
+    end
+
+    def copy_script
+      return false unless @custom_script
+      if Pathname(@custom_script).exist?
+        File.link(Pathname(@custom_script), macos_dir + 'applet')
+        true
+      else
+        puts "Script file doesn't exist"
+        exit
+      end
+    end
+
+    def create_exec
+      copy_script || write_script
     end
 
     def create

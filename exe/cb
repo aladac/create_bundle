@@ -1,26 +1,48 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'create_bundle'
 
 options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename $PROGRAM_NAME} [-v] SOURCE_APP [DESTINATION_APP]"
 
-  opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
-    options[:verbose] = v
-  end
+begin
+  OptionParser.new do |opts|
+    opts.banner = <<~BANNER
+      Usage: #{File.basename $PROGRAM_NAME} [OPTIONS] SOURCE_APP [DESTINATION_APP]
+      Usage: #{File.basename $PROGRAM_NAME} -i ICON -s SCRIPT -b DESTINATION_APP
+    BANNER
 
-  opts.on('-e', '--empty', 'Run verbosely') do |e|
-    options[:empty] = e
-  end
+    opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
+      options[:verbose] = v
+    end
 
-  puts opts if opts.default_argv.empty?
-end.parse!
+    opts.on('-i', '--icon PATH', 'Use a custom icon') do |icon|
+      options[:icon] = icon
+    end
+
+    opts.on('-s', '--script PATH', 'Use a custom executable') do |script|
+      options[:script] = script
+    end
+
+    opts.on('-b', '--bare', 'Create a bare bundle') do |bare|
+      options[:bare] = bare
+    end
+
+    puts opts if opts.default_argv.empty?
+  end.parse!
+rescue OptionParser::InvalidOption => e
+  puts e.message
+end
 
 exit unless ARGV[0]
 
-binding.pry
+if options[:bare]
+  unless options[:script] && options[:icon]
+    puts 'You need to specify both a script and icon when creating a bare bundle'
+    exit
+  end
+end
 
-c = CreateBundle::Base.new(ARGV[0], ARGV[1])
+c = CreateBundle::Base.new(ARGV[0], ARGV[1], options[:script], options[:icon], options[:bare])
 c.verbose = options[:verbose]
 c.create

@@ -3,7 +3,7 @@
 
 Tool for creating MacOS application bundles containing an icon and launch command copied from the source application.
 
-# Why?
+## Why?
 - Can't you just create a link? _Yes I can but I can't add commands to be run before an app is started_
 - Can't you just do it all using a bash one liner? _Yes I can but I'm lazy and the gem exec provides some basic error handling_
 - To create bare bundles to edit later
@@ -25,6 +25,12 @@ Usage: cb -i ICON -s SCRIPT -b DESTINATION_APP
 
 	$ cb -v /Applications/iTerm.app ~/Desktop/iTerm.app
 	$ cb -b -i Icon.icns -s start.sh New.app
+	
+## What does it actually do?
+The script when run for a source app bundle copies the icon file from the bundle (trying to parse the Info.plist, falling back to AppIcon.icns when failed), creates a new app bundle with this icon and a script to open the original app bundle.
+You may say the end result is kind of like creating a filesystem link.
+
+You can create a _"bare"_ bundle with a custom script and icon
 
 ## License
 

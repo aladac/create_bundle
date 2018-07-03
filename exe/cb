@@ -9,10 +9,17 @@ OptionParser.new do |opts|
   opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
     options[:verbose] = v
   end
+
+  opts.on('-e', '--empty', 'Run verbosely') do |e|
+    options[:empty] = e
+  end
+
   puts opts if opts.default_argv.empty?
 end.parse!
 
 exit unless ARGV[0]
+
+binding.pry
 
 c = CreateBundle::Base.new(ARGV[0], ARGV[1])
 c.verbose = options[:verbose]

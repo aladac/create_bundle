@@ -1,3 +1,3 @@
-module CreateLink
+module CreateBundle
   VERSION = '0.1.3'.freeze
 end

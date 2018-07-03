@@ -1,10 +1,10 @@
-# CreateLink
+# CreateBundle
 
 A simple tool for creating bare MacOS application bundles containing an icon and launch command copied from the source application.
 
 ## Installation
 
-    $ gem install create_link
+    $ gem install create_bundle
 
 ## Usage
 

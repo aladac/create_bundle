@@ -1,17 +1,17 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'create_link/version'
+require 'create_bundle/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'create_link'
-  spec.version       = CreateLink::VERSION
+  spec.name          = 'create_bundle'
+  spec.version       = CreateBundle::VERSION
   spec.authors       = ['Adam Ladachowski']
   spec.email         = ['ladachowski@cic.com']
 
   spec.summary       = 'Create launcher app bundles'
   spec.description   = 'Create launcher app bundles with icon from app bundle'
 
-  spec.homepage      = 'https://github.com/aladac/create_link'
+  spec.homepage      = 'https://github.com/aladac/create_bundle'
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

@@ -1,11 +1,11 @@
-require 'create_link/version'
+require 'create_bundle/version'
 require 'logger'
 require 'plist'
 require 'pathname'
 require 'pry'
 require 'optparse'
 
-module CreateLink
+module CreateBundle
   class Base
     attr_accessor :logger, :app_path, :target_path, :verbose
 

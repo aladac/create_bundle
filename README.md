@@ -9,7 +9,7 @@ A simple tool for creating bare MacOS application bundles containing an icon and
 ## Usage
 
 ```
-Usage: cl SOURCE_APP [DESTINATION_PATH]
+Usage: cb SOURCE_APP [DESTINATION_PATH]
 ```
 
 ## License

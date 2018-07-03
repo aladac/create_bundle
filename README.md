@@ -3,6 +3,10 @@
 
 Tool for creating MacOS application bundles containing an icon and launch command copied from the source application.
 
+## Example
+
+![example](https://i.imgur.com/FwpYr8Q.gif)
+
 ## Why?
 - Can't you just create a link? _Yes I can but I can't add commands to be run before an app is started_
 - Can't you just do it all using a bash one liner? _Yes I can but I'm lazy and the gem exec provides some basic error handling_

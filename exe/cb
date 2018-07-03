@@ -43,6 +43,6 @@ if options[:bare]
   end
 end
 
-c = CreateBundle::Base.new(ARGV[0], ARGV[1], options[:script], options[:icon], options[:bare])
+c = CreateBundle::Base.new(source: ARGV[0], target: ARGV[1], script: options[:script], icon: options[:icon], bare: options[:bare])
 c.verbose = options[:verbose]
 c.create

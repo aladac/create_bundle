@@ -11,17 +11,13 @@ module CreateBundle
   class Base
     attr_accessor :logger, :app_path, :target_path, :verbose
 
-    def initialize(path, target_path = nil, custom_script = nil, custom_icon = nil, bare = false)
+    def initialize(options)
       @logger = Logger.new(STDOUT)
-      @app_path = Pathname(path)
-      @custom_icon = custom_icon
-      @custom_script = custom_script
-      if bare
-        target_path = path
-      else
-        (logger.info("Source doesn't look like an app bundle") && exit) unless plist_path.exist?
-      end
-      @target_path = target_path ? Pathname(target_path) : Pathname(@app_path.basename.to_s)
+      @app_path = Pathname(options[:source])
+      @custom_icon = options[:icon]
+      @custom_script = options[:script]
+      options[:target] = options[:source] if options[:bare]
+      @target_path = options[:target] ? Pathname(options[:target]) : Pathname(@app_path.basename.to_s)
     end
 
     def custom_icon_path
@@ -35,7 +31,7 @@ module CreateBundle
     end
 
     def icon_path
-      app_path + 'Contents' + 'Resources' + icon_file
+      custom_icon_path || app_path + 'Contents' + 'Resources' + icon_file
     rescue ArgumentError
       logger.warn 'Problem reading source plist file, probably binary format, falling back to default icon name'
       icon = app_path + 'Contents' + 'Resources' + 'AppIcon.icns'
@@ -43,7 +39,8 @@ module CreateBundle
     end
 
     def plist_path
-      app_path + 'Contents' + 'Info.plist'
+      path = app_path + 'Contents' + 'Info.plist'
+      path.exist? ? path : (logger.info("Source doesn't look like an app bundle") && exit)
     end
 
     def plist
@@ -87,7 +84,7 @@ module CreateBundle
     end
 
     def copy_icon
-      File.link(custom_icon_path || icon_path, resources_dir + 'applet.icns')
+      File.link(icon_path, resources_dir + 'applet.icns')
       logger.debug "Copied icon to: #{(resources_dir + 'applet.icns')}" if verbose
     end
 
@@ -95,7 +92,6 @@ module CreateBundle
       f = File.new(macos_dir + 'applet', 'w')
       f.puts "#!/bin/sh\nopen -a \"#{ARGV[0]}\""
       f.close
-      FileUtils.chmod 0o755, macos_dir + 'applet'
       logger.debug "Created exec: #{(macos_dir + 'applet')}" if verbose
     end
 
@@ -112,6 +108,7 @@ module CreateBundle
 
     def create_exec
       copy_script || write_script
+      FileUtils.chmod 0o755, macos_dir + 'applet'
     end
 
     def create
